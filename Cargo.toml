@@ -1,0 +1,7 @@
+[package]
+name = "libxmp"
+version = "0.1.0"
+authors = ["Cameron Ruatta <c@ruatta.com>"]
+
+[dependencies]
+libc = "0.2"
