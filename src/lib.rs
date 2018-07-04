@@ -2,7 +2,7 @@
 extern crate libc;
 
 use std::path::Path;
-use std::ffi::{  CString, CStr };
+use std::ffi::{ CString, CStr };
 
 mod error;
 mod ffi;
@@ -43,6 +43,7 @@ mod tests {
             assert_eq!(x.kind, ErrorKind::InternalType(InternalErrorKind::System))
         }
     }
+
 }
 
 
