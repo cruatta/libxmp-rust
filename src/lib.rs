@@ -14,8 +14,23 @@ mod tests {
     use super::error::*;
 
     #[test]
-    fn test_test_module_xm() {
-        let path = Path::new("./test/lol.xm");
+    fn test_test_module_xm0_no_title() {
+        // Wiklund & Joule - Makebelieve Girl.xm
+        let path = Path::new("./test/test0.xm");
+
+        match test_module(&path) {
+            Ok(x) => {
+                assert_eq!(x.t_name, "");
+                assert_eq!(x.t_type, "Fast Tracker II");
+            },
+            Err(y) => panic!(y.details)
+        }
+    }
+
+    #[test]
+    fn test_test_module_xm1_full() {
+        //  andromeda/fairlight - playboy.xm
+        let path = Path::new("./test/test1.xm");
 
         match test_module(&path) {
             Ok(x) => {
@@ -25,6 +40,31 @@ mod tests {
             Err(y) => panic!(y.details)
         }
     }
+
+    #[test]
+    fn test_test_module_mod() {
+        // buzzer/zenon - dee in space v2
+        let path = Path::new("./test/test0.mod");
+
+        match test_module(&path) {
+            Ok(x) => {
+                assert_eq!(x.t_name, "dee in space.v2");
+                assert_eq!(x.t_type, "Amiga Protracker/Compatible");
+            },
+            Err(y) => panic!(y.details)
+        }
+    }
+
+    #[test]
+    fn test_test_text_file() {
+        let path = Path::new("./test/test.bad");
+
+        if let Err(x) = test_module(&path) {
+            assert_eq!(x.kind, ErrorKind::InternalType(InternalErrorKind::BadFormat))
+        }
+    }
+
+
 
     #[test]
     fn test_test_module_dir() {
