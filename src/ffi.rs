@@ -5,6 +5,84 @@
 
 use libc::{c_void, c_char, c_int, c_uint, c_short, c_uchar};
 
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use std::mem::uninitialized;
+    use std::path::Path;
+    use std::ffi::{ CString, CStr };
+
+    #[test]
+    fn test_ffi_get_module_info() {
+        
+        /*
+        let note_names = vec![
+	          "C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#", "A ", "A#", "B "
+        ];
+         */
+
+        /*
+        ~/l/examples (master|✚1…) $ ./showinfo test1.xm
+        Name: playboy
+        Type: FastTracker v2.00 XM 1.04
+        Number of patterns: 13
+        Number of tracks: 121
+        Number of channels: 10
+        Number of instruments: 10
+        Number of samples: 8
+        Initial speed: 4
+        Initial BPM: 125
+        Length in patterns: 26
+        */
+
+        let path = Path::new("./test/test1.xm");
+        let p = CString::new(path.to_string_lossy().as_ref()).unwrap();
+        let p_ptr = p.as_ptr();
+
+        unsafe {
+
+            let ctx = xmp_create_context();
+            xmp_load_module(ctx, p_ptr);
+
+            xmp_start_player(ctx, 44100, 0);
+
+            let mut module_info: xmp_module_info = uninitialized();
+            xmp_get_module_info(ctx, &mut module_info);
+            let module = module_info.module;
+
+            let m_name = (*module).m_name.as_ptr();
+            let m_name = CStr::from_ptr(m_name).to_string_lossy().into_owned();
+            let m_type = (*module).m_type.as_ptr();
+            let m_type = CStr::from_ptr(m_type).to_string_lossy().into_owned();
+
+            let num_pat: i32 = (*module).pat;
+            let num_ins: i32 = (*module).ins;
+            let num_smp: i32 = (*module).smp;
+            let num_trk: i32 = (*module).trk;
+            let num_chn: i32 = (*module).chn;
+            let spd: i32 = (*module).spd;
+            let bpm: i32 = (*module).bpm;
+            let len: i32 = (*module).len;
+
+            assert_eq!(m_name, "playboy");
+            assert_eq!(m_type, "FastTracker v2.00 XM 1.04");
+            assert_eq!(num_pat, 13);
+            assert_eq!(num_trk, 121);
+            assert_eq!(num_chn, 10);
+            assert_eq!(num_ins, 10);
+            assert_eq!(num_smp, 8);
+            assert_eq!(spd, 4);
+            assert_eq!(bpm, 125);
+            assert_eq!(len, 26);
+
+            xmp_end_player(ctx);
+            xmp_release_module(ctx);
+        }
+    }
+}
+
+
 /* error codes */
 pub const XMP_END: i32 = 1;
 pub const XMP_ERROR_INTERNAL: i32 = 2;
@@ -211,17 +289,19 @@ pub type xmp_context = *mut c_char;
 
 #[link(name = "xmp")]
 extern {
-    pub fn xmp_create_context() -> *mut xmp_context;
-    pub fn xmp_free_context(context: *mut xmp_context) -> c_void;
+    pub fn xmp_create_context() -> xmp_context;
+    pub fn xmp_free_context(context: xmp_context) -> c_void;
     pub fn xmp_test_module(path: *const c_char, info: *mut xmp_test_info) -> c_int;
-    pub fn xmp_load_module(context: *mut xmp_context, path: *const c_char) -> c_int;
-    pub fn xmp_scan_module(context: *mut xmp_context) -> c_void;
-    pub fn xmp_release_module(context: *mut xmp_context) -> c_void;
-    pub fn xmp_start_player(context: *mut xmp_context, rate: c_int, format: c_int) -> c_int;
-    pub fn xmp_play_frame(context: *mut xmp_context) -> c_int;
-    pub fn xmp_play_buffer(context: *mut xmp_context, out_buffer: *mut c_void, size: c_int, b_loop: c_int) -> c_int;
-    pub fn xmp_get_frame_info(context: *mut xmp_context, module_info: *mut xmp_frame_info) -> c_void;
-    pub fn xmp_end_player(context: *mut xmp_context) -> c_void;
-    pub fn xmp_inject_event(context: *mut xmp_context, channel: c_int, event: *mut xmp_event) -> c_void;
-    pub fn xmp_get_module_info(context: *mut xmp_context, stuff: *mut xmp_module_info) -> c_void;
+    pub fn xmp_load_module(context: xmp_context, path: *const c_char) -> c_int;
+    pub fn xmp_scan_module(context: xmp_context) -> c_void;
+    pub fn xmp_release_module(context: xmp_context) -> c_void;
+    pub fn xmp_start_player(context: xmp_context, rate: c_int, format: c_int) -> c_int;
+    pub fn xmp_play_frame(context: xmp_context) -> c_int;
+    pub fn xmp_play_buffer(context: xmp_context, out_buffer: *mut c_void, size: c_int, b_loop: c_int) -> c_int;
+    pub fn xmp_get_frame_info(context: xmp_context, module_info: *mut xmp_frame_info) -> c_void;
+    pub fn xmp_end_player(context: xmp_context) -> c_void;
+    pub fn xmp_inject_event(context: xmp_context, channel: c_int, event: *mut xmp_event) -> c_void;
+    pub fn xmp_get_module_info(context: xmp_context, module_info: *mut xmp_module_info) -> c_void;
 }
+
+

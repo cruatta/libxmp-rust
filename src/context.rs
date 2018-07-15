@@ -2,7 +2,7 @@
 use ffi::*;
 
 pub struct Context {
-    pub xmp_context: *mut xmp_context
+    pub xmp_context: xmp_context
 }
 
 
