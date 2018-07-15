@@ -2,18 +2,15 @@
 use ffi::*;
 
 pub struct Context {
-    pub xmp_context: *mut xmp_context
+    pub xmp_context: Box<xmp_context>
 }
 
 
 impl Context {
     pub fn new() -> Context {
         unsafe {
-            let context: *mut xmp_context = xmp_create_context();
-            match context.as_ref() {
-                Some(_) => Context{ xmp_context: context },
-                None => panic!("Cannot allocate context")
-            }
+            let xmp_context = Box::from_raw(xmp_create_context());
+            Context { xmp_context }
         }
     }
 }
@@ -26,6 +23,7 @@ mod tests {
     #[test]
     fn test_new_context() {
         let x = Context::new();
+        //assert!(true, false);
     }
 
 }

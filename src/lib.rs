@@ -4,5 +4,5 @@ extern crate libc;
 
 mod error;
 mod ffi;
-pub mod context;
+//pub mod context;
 pub mod test_module; 

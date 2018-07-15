@@ -98,7 +98,7 @@ pub fn test_module(path: &Path) -> Result<TestModuleInfo, XmpError> {
     let (test_info, ret) = unsafe {
         let mut test_info: xmp_test_info = uninitialized();
         let ret = xmp_test_module(CString::new(p.as_ref()).unwrap().as_ptr(), &mut test_info);
-            (test_info, ret)
+        (test_info, ret)
     };
 
     if ret != 0 {
@@ -106,14 +106,15 @@ pub fn test_module(path: &Path) -> Result<TestModuleInfo, XmpError> {
         return Err(XmpError::new(&format!("xmp_test_module call failed with code: {}", ret), int_kind));
     };
 
-    let (t_name, t_type) = unsafe {
-        let t_name = CStr::from_ptr(test_info.t_name.as_ptr());
-        let t_name = t_name.to_owned().into_string().unwrap();
-        let t_type = CStr::from_ptr(test_info.t_type.as_ptr());
-        let t_type = t_type.to_owned().into_string().unwrap();
+    let t_name_ptr = test_info.t_name.as_ptr();
+    let t_type_ptr = test_info.t_type.as_ptr();
 
-        (t_name, t_type)
+    let (t_name, t_type) = unsafe {
+        (CStr::from_ptr(t_name_ptr), CStr::from_ptr(t_type_ptr))
     };
+
+    let t_name = t_name.to_owned().into_string().unwrap();
+    let t_type = t_type.to_owned().into_string().unwrap();
 
     return Ok(TestModuleInfo{ t_name, t_type });
 }
