@@ -29,4 +29,5 @@ pub type xmp_context = *mut c_char;
 extern {
     pub fn xmp_test_module(path: *const c_char, info: *mut xmp_test_info) -> c_int;
     pub fn xmp_create_context() -> *mut xmp_context;
+    pub fn xmp_free_context(context: *mut xmp_context) -> ();
 }

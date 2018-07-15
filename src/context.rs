@@ -1,6 +1,5 @@
 //lib.rs
 use ffi::*;
-use libc::{ free, c_void };
 
 pub struct Context {
     pub xmp_context: *mut xmp_context
@@ -21,7 +20,7 @@ impl Context {
 
 impl Drop for Context {
     fn drop(&mut self) {
-        unsafe { free(self.xmp_context as *mut c_void) };
+        unsafe { xmp_free_context(self.xmp_context) };
     }
 }
 
