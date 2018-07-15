@@ -2,6 +2,7 @@
  * ffi.rs
  */
 
+
 use libc::{c_char, c_int};
 
 /* error codes */
@@ -22,7 +23,10 @@ pub struct xmp_test_info {
     pub t_type: [c_char; XMP_NAME_SIZE]
 }
 
+pub type xmp_context = *mut c_char;
+
 #[link(name = "xmp")]
 extern {
     pub fn xmp_test_module(path: *const c_char, info: *mut xmp_test_info) -> c_int;
+    pub fn xmp_create_context() -> *mut xmp_context;
 }
