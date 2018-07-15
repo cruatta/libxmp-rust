@@ -10,9 +10,9 @@ pub struct Context {
 impl Context {
     pub fn new() -> Context {
         unsafe {
-            let context: *mut xmp_context = xmp_create_context();
-            match context.as_ref() {
-                Some(_) => Context{ xmp_context: context },
+            let xmp_context = xmp_create_context();
+            match xmp_context.as_ref() {
+                Some(_) => Context{ xmp_context },
                 None => panic!("Cannot allocate context")
             }
         }

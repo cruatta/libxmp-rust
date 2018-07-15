@@ -93,8 +93,7 @@ pub struct TestModuleInfo {
 
 
 pub fn test_module(path: &Path) -> Result<TestModuleInfo, XmpError> {
-    let p = path.to_string_lossy();
-    let p = CString::new(p.as_ref()).unwrap();
+    let p = CString::new(path.to_string_lossy().as_ref()).unwrap();
     let p_ptr = p.as_ptr();
 
     let (test_info, ret) = unsafe {
