@@ -15,7 +15,6 @@ mod tests {
 
     #[test]
     fn test_ffi_get_module_info() {
-        
         /*
         let note_names = vec![
 	          "C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#", "A ", "A#", "B "
