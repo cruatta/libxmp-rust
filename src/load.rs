@@ -1,4 +1,4 @@
-//lib.rs
+//load.rs
 
 use std::path::Path;
 use std::ffi::{ CString, CStr };
@@ -6,6 +6,7 @@ use std::mem::*;
 
 use error::*;
 use ffi::*;
+use context::*;
 
 #[cfg(test)]
 mod tests {
@@ -107,15 +108,31 @@ pub fn test_module(path: &Path) -> Result<TestModuleInfo, XmpError> {
         return Err(XmpError::new(&format!("xmp_test_module call failed with code: {}", ret), int_kind));
     };
 
-    let t_name_ptr = test_info.t_name.as_ptr();
-    let t_type_ptr = test_info.t_type.as_ptr();
+    let t_name = test_info.t_name.as_ptr();
+    let t_type = test_info.t_type.as_ptr();
 
     let (t_name, t_type) = unsafe {
-        (CStr::from_ptr(t_name_ptr), CStr::from_ptr(t_type_ptr))
+        (CStr::from_ptr(t_name), CStr::from_ptr(t_type))
     };
 
     let t_name = t_name.to_owned().into_string().unwrap();
     let t_type = t_type.to_owned().into_string().unwrap();
 
     return Ok(TestModuleInfo{ t_name, t_type });
+}
+
+pub fn load_module(context: &Context, path: &Path) -> Result<(), XmpError> {
+    let p = CString::new(path.to_string_lossy().as_ref()).unwrap();
+    let p_ptr = p.as_ptr();
+
+    let ret = unsafe {
+        xmp_load_module(context.xmp_context, p_ptr)
+    };
+
+    if ret != 0 {
+        let int_kind = from_int_error_code(ret);
+        return Err(XmpError::new(&format!("xmp_load_module call failed with code: {}", ret), int_kind));
+    };
+
+    return Ok(());
 }
