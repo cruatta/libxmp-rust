@@ -3,7 +3,7 @@
  */
 
 
-use libc::{c_void, c_char, c_int, c_uint, c_short, c_uchar};
+use libc::{c_void, c_char, c_int, c_uint, c_short, c_uchar, c_long};
 
 #[cfg(test)]
 mod tests {
@@ -78,6 +78,7 @@ mod tests {
 
             xmp_end_player(ctx);
             xmp_release_module(ctx);
+            xmp_free_context(ctx);
         }
     }
 }
@@ -289,19 +290,53 @@ pub type xmp_context = *mut c_char;
 
 #[link(name = "xmp")]
 extern {
+    //info
+    pub fn xmp_get_format_list() -> *const *const c_char;
+
+    // context
     pub fn xmp_create_context() -> xmp_context;
-    pub fn xmp_free_context(context: xmp_context) -> c_void;
-    pub fn xmp_test_module(path: *const c_char, info: *mut xmp_test_info) -> c_int;
-    pub fn xmp_load_module(context: xmp_context, path: *const c_char) -> c_int;
-    pub fn xmp_scan_module(context: xmp_context) -> c_void;
-    pub fn xmp_release_module(context: xmp_context) -> c_void;
-    pub fn xmp_start_player(context: xmp_context, rate: c_int, format: c_int) -> c_int;
-    pub fn xmp_play_frame(context: xmp_context) -> c_int;
-    pub fn xmp_play_buffer(context: xmp_context, out_buffer: *mut c_void, size: c_int, b_loop: c_int) -> c_int;
-    pub fn xmp_get_frame_info(context: xmp_context, module_info: *mut xmp_frame_info) -> c_void;
-    pub fn xmp_end_player(context: xmp_context) -> c_void;
-    pub fn xmp_inject_event(context: xmp_context, channel: c_int, event: *mut xmp_event) -> c_void;
-    pub fn xmp_get_module_info(context: xmp_context, module_info: *mut xmp_module_info) -> c_void;
+    pub fn xmp_free_context(c: xmp_context) -> c_void;
+
+    // load
+    pub fn xmp_test_module(path: *const c_char, test_info: *mut xmp_test_info) -> c_int;
+    pub fn xmp_load_module(c: xmp_context, path: *const c_char) -> c_int;
+    pub fn xmp_scan_module(c: xmp_context) -> c_void;
+    pub fn xmp_release_module(c: xmp_context) -> c_void;
+    pub fn xmp_load_module_from_memory(c: xmp_context, mem: *mut c_void, size: c_long) -> c_int;
+    pub fn xmp_load_module_from_file(c: xmp_context, f: *mut c_void, size: c_long) -> c_int;
+    pub fn xmp_get_module_info(c: xmp_context, module_info: *mut xmp_module_info) -> c_void;
+
+    //play
+    pub fn xmp_start_player(c: xmp_context, rate: c_int, format: c_int) -> c_int;
+    pub fn xmp_play_frame(c: xmp_context) -> c_int;
+    pub fn xmp_play_buffer(c: xmp_context, out_buffer: *mut c_void, size: c_int, b_loop: c_int) -> c_int;
+    pub fn xmp_get_frame_info(c: xmp_context, info: *mut xmp_frame_info) -> c_void;
+    pub fn xmp_end_player(c: xmp_context) -> c_void;
+
+    //control
+    pub fn xmp_next_position(c: xmp_context) -> c_int;
+    pub fn xmp_prev_position(c: xmp_context) -> c_int;
+    pub fn xmp_set_position(c: xmp_context, pos: c_int) -> c_int;
+    pub fn xmp_stop_module(c: xmp_context) -> c_void;
+    pub fn xmp_restart_module(c: xmp_context) -> c_void;
+    pub fn xmp_seek_time(c: xmp_context) -> c_int;
+    pub fn xmp_channel_mute(c: xmp_context, chn: c_int, status: c_int) -> c_int;
+    pub fn xmp_channel_vol(c: xmp_context, chn: c_int, vol: c_int) -> c_int;
+    pub fn xmp_inject_event(c: xmp_context, chn: c_int, event: *mut xmp_event) -> c_void;
+
+    //params
+    pub fn xmp_set_player(c: xmp_context, param: c_int, val: c_int) -> c_int;
+    pub fn xmp_get_player(c: xmp_context, param: c_int) -> c_int;
+    pub fn xmp_set_instrument_path(c: xmp_context, path: *const c_char) -> c_int;
+
+    //smix
+    pub fn xmp_start_smix(c: xmp_context, nch: c_int, nsmp: c_int) -> c_int;
+    pub fn xmp_end_smix(c: xmp_context) -> c_void;
+    pub fn xmp_smix_play_instrument(c: xmp_context, ins: c_int, note: c_int, vol: c_int, chn: c_int) -> c_int;
+    pub fn xmp_smix_play_sample(c: xmp_context, ins: c_int, vol: c_int, chn: c_int) -> c_int;
+    pub fn xmp_smix_channel_pan(c: xmp_context, chn: c_int, pan: c_int) -> c_int;
+    pub fn xmp_smix_load_sample(c: xmp_context, num: c_int, path: *const c_char) -> c_int;
+    pub fn xmp_smix_release_sample(c: xmp_context, num: c_int) -> c_int;
 }
 
 
