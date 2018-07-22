@@ -2,7 +2,7 @@
 use ffi::*;
 
 pub struct Context {
-    pub xmp_context: xmp_context
+    pub(crate) state: xmp_context
 }
 
 
@@ -11,7 +11,7 @@ impl Context {
         unsafe {
             let xmp_context = xmp_create_context();
             match xmp_context.as_ref() {
-                Some(_) => Context{ xmp_context },
+                Some(_) => Context{ state: xmp_context },
                 None => panic!("Cannot allocate context")
             }
         }
@@ -20,7 +20,7 @@ impl Context {
 
 impl Drop for Context {
     fn drop(&mut self) {
-        unsafe { xmp_free_context(self.xmp_context) };
+        unsafe { xmp_free_context(self.state) };
     }
 }
 

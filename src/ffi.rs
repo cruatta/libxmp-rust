@@ -95,13 +95,34 @@ pub const XMP_ERROR_STATE: i32 = 8;
 
 pub const XMP_NAME_SIZE: usize = 64;
 
-pub const XMP_MAX_CHANNELS: usize = 64;
+/* player modes */
+pub const XMP_MODE_AUTO: usize = 0;
+pub const XMP_MODE_MOD: usize = 1;
+pub const XMP_MODE_NOISETRACKER: usize = 2;
+pub const XMP_MODE_PROTRACKER: usize = 3;
+pub const XMP_MODE_S3M: usize = 4;
+pub const XMP_MODE_ST3: usize = 5;
+pub const XMP_MODE_ST3GUS: usize = 6;
+pub const XMP_MODE_XM: usize = 7;
+pub const XMP_MODE_FT2: usize = 8;
+pub const XMP_MODE_IT: usize = 9;
+pub const XMP_MODE_ITSMP: usize = 10;
 
-pub const XMP_MAX_MOD_LENGTH: usize = 256;
-
-pub const XMP_MAX_ENV_POINTS: usize = 32;
-
+/* limits */
 pub const XMP_MAX_KEYS: usize = 121;
+pub const XMP_MAX_ENV_POINTS: usize = 32;
+pub const XMP_MAX_MOD_LENGTH: usize = 256;
+pub const XMP_MAX_CHANNELS: usize = 64;
+pub const XMP_MAX_SRATE: usize = 49170;
+pub const XMP_MIN_SRATE: usize = 4000;
+pub const XMP_MIN_BPM: usize = 20;
+
+//TODO Define macro for computing XMP_MAX_FRAMESIZE
+
+/* frame rate = (50 * bpm / 125) Hz */
+/* frame size = (sampling rate * channels * size) / frame rate */
+//#define XMP_MAX_FRAMESIZE	(5 * XMP_MAX_SRATE * 2 / XMP_MIN_BPM)
+
 
 #[repr(C)]
 pub struct xmp_test_info {

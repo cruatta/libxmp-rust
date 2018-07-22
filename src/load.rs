@@ -9,7 +9,7 @@ use ffi::*;
 use context::*;
 
 #[cfg(test)]
-mod tests {
+mod test_module {
 
     use super::*;
 
@@ -83,7 +83,38 @@ mod tests {
             assert_eq!(x.kind, ErrorKind::InternalType(InternalErrorKind::System))
         }
     }
+}
 
+#[cfg(test)]
+mod load_module {
+
+    use super::*;
+
+    #[test]
+    fn test_load_module() {
+        let path = Path::new("./test/test1.xm");
+
+        let context = Context::new();
+
+        if let Ok(x) = load_module(&context, &path) {
+            assert_eq!(x, ());
+        }
+
+        if let Ok(x) = load_module(&context, &path) {
+            assert_eq!(x, ());
+        }
+
+    }
+
+    #[test]
+    fn test_load_module_missing_path() {
+        let path = Path::new("./test/bad");
+        let context = Context::new();
+
+        if let Err(x) = load_module(&context, &path) {
+            assert_eq!(x.kind, ErrorKind::InternalType(InternalErrorKind::System))
+        }
+    }
 }
 
 
@@ -121,12 +152,13 @@ pub fn test_module(path: &Path) -> Result<TestModuleInfo, XmpError> {
     return Ok(TestModuleInfo{ t_name, t_type });
 }
 
-pub fn load_module(context: &Context, path: &Path) -> Result<(), XmpError> {
+
+pub fn load_module(c: &Context, path: &Path) -> Result<(), XmpError> {
     let p = CString::new(path.to_string_lossy().as_ref()).unwrap();
     let p_ptr = p.as_ptr();
 
     let ret = unsafe {
-        xmp_load_module(context.xmp_context, p_ptr)
+        xmp_load_module(c.state, p_ptr)
     };
 
     if ret != 0 {
@@ -135,4 +167,8 @@ pub fn load_module(context: &Context, path: &Path) -> Result<(), XmpError> {
     };
 
     return Ok(());
+}
+
+pub fn release_module(c: &Context) -> Result<(), XmpError> {
+    Ok(())
 }
