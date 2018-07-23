@@ -114,24 +114,6 @@ mod get_frame_info {
 
     use super::*;
 
-    /*
-    #[test]
-    fn test_load_module() {
-        let path = Path::new("./test/test1.xm");
-
-        let context = Context::new();
-
-        if let Ok(x) = load_module(&context, &path) {
-            assert_eq!(x, ());
-        }
-
-        if let Ok(x) = load_module(&context, &path) {
-            assert_eq!(x, ());
-        }
-
-    }
-    */
-
     #[test]
     fn test_get_frame_info_not_loaded() {
         let context = Context::new();
