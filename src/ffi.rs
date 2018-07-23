@@ -117,11 +117,9 @@ pub const XMP_MAX_SRATE: usize = 49170;
 pub const XMP_MIN_SRATE: usize = 4000;
 pub const XMP_MIN_BPM: usize = 20;
 
-//TODO Define macro for computing XMP_MAX_FRAMESIZE
-
 /* frame rate = (50 * bpm / 125) Hz */
 /* frame size = (sampling rate * channels * size) / frame rate */
-//#define XMP_MAX_FRAMESIZE	(5 * XMP_MAX_SRATE * 2 / XMP_MIN_BPM)
+pub const XMP_MAX_FRAMESIZE: usize = 5 * XMP_MAX_SRATE * 2 / XMP_MIN_BPM;
 
 
 #[repr(C)]

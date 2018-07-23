@@ -135,8 +135,7 @@ pub fn test_module(path: &Path) -> Result<TestModuleInfo, XmpError> {
     };
 
     if ret != 0 {
-        let int_kind = from_int_error_code(ret);
-        return Err(XmpError::new(&format!("xmp_test_module call failed with code: {}", ret), int_kind));
+        return Err(XmpError::new(&format!("xmp_test_module call failed with code: {}", ret), ErrorKind::from_xmp(ret)));
     };
 
     let t_name = test_info.t_name.as_ptr();
@@ -162,8 +161,7 @@ pub fn load_module(c: &Context, path: &Path) -> Result<(), XmpError> {
     };
 
     if ret != 0 {
-        let int_kind = from_int_error_code(ret);
-        return Err(XmpError::new(&format!("xmp_load_module call failed with code: {}", ret), int_kind));
+        return Err(XmpError::new(&format!("xmp_load_module call failed with code: {}", ret), ErrorKind::from_xmp(ret)));
     };
 
     return Ok(());

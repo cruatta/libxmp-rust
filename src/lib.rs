@@ -1,4 +1,5 @@
 //lib.rs
+#![allow(dead_code)]
 
 extern crate libc;
 
