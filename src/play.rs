@@ -141,7 +141,7 @@ mod get_frame_info {
         load_module(&context, &path);
 
         match get_frame_info(&context) {
-            Ok(_) => {
+            Ok(x) => {
                 /*
                 println!("{:?}", x.time);
                 println!("{:?}", x.frame_time);
@@ -157,6 +157,7 @@ mod get_frame_info {
                 println!("{:?}", x.total_size);
                 assert_eq!(x.bpm, 125)},
                  */
+                println!("{:?}", x.bpm);
                 assert!(false)
             },
             Err(x) => assert_eq!(x.kind, ErrorKind::SelfType(SelfErrorKind::Other))
