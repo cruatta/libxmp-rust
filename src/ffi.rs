@@ -4,6 +4,7 @@
 
 
 use libc::{c_void, c_char, c_int, c_uint, c_short, c_uchar, c_long};
+use std::fmt::{Debug, Formatter, Result};
 
 #[cfg(test)]
 mod tests {
@@ -128,6 +129,7 @@ pub struct xmp_test_info {
     pub t_type: [c_char; XMP_NAME_SIZE]
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_event {
     note: c_uchar,
@@ -140,6 +142,8 @@ pub struct xmp_event {
     flag: c_uchar
 }
 
+
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_channel_info {
     pub period: c_uint,
@@ -153,7 +157,6 @@ pub struct xmp_channel_info {
     pub reserved: c_uchar,
     pub event: xmp_event
 }
-
 
 #[repr(C)]
 pub struct xmp_frame_info {
@@ -178,19 +181,21 @@ pub struct xmp_frame_info {
     pub channel_info: [xmp_channel_info; XMP_MAX_CHANNELS]
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_sequence {
     pub entry_point: c_int,
     pub duration: c_int
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_pattern {
 	  pub rows: c_int,
 	  pub index: [c_int; 1]
 }
 
-
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_channel {
     pub pan: c_int,
@@ -210,12 +215,14 @@ pub struct xmp_envelope {
     pub data: [c_short; XMP_MAX_ENV_POINTS * 2]
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_track {
     pub rows: c_int,
     pub event: [xmp_event; 1]
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_sample {
     pub name: [c_char; 32],
@@ -243,6 +250,7 @@ pub struct xmp_instrument {
     pub sub: *const xmp_sub_instrument
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_sub_instrument {
     pub vol: c_int,
@@ -263,6 +271,7 @@ pub struct xmp_sub_instrument {
     pub ifr: c_int
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_key {
     pub ins: c_uchar,
@@ -292,7 +301,7 @@ pub struct xmp_module {
     pub xxo: [c_uchar; XMP_MAX_MOD_LENGTH]
 }
 
-
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_module_info {
     pub md5: [c_uchar; 16],

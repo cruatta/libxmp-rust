@@ -120,13 +120,17 @@ mod get_frame_info {
     fn test_get_frame_info_not_loaded() {
         let context = Context::new();
 
-        if let Ok(x) = get_frame_info(&context) {
-            assert_eq!(x.frame_time, 125)
+        match get_frame_info(&context) {
+            Ok(_) => {
+                /*
+                println!("{:?}", x.total_size);
+                println!("{:?}", x.total_time);
+                assert_eq!(x.frame_time, 125)
+                */
+                assert!(false)
+            },
+            Err(x) => assert_eq!(x.kind, ErrorKind::SelfType(SelfErrorKind::Other))
         }
-        if let Err(x) = get_frame_info(&context) {
-            assert_eq!(x.kind, ErrorKind::SelfType(SelfErrorKind::Other))
-        }
-        assert!(false)
     }
 
     #[test]
@@ -135,14 +139,28 @@ mod get_frame_info {
         let path = Path::new("./test/test0.mod");
 
         load_module(&context, &path);
-        if let Ok(x) = get_frame_info(&context) {
-            assert_eq!(x.bpm, 125)
-        }
 
-        if let Err(x) = get_frame_info(&context) {
-            assert_eq!(x.kind, ErrorKind::SelfType(SelfErrorKind::Other))
+        match get_frame_info(&context) {
+            Ok(_) => {
+                /*
+                println!("{:?}", x.time);
+                println!("{:?}", x.frame_time);
+                println!("{:?}", x.bpm);
+                println!("{:?}", x.buffer_size);
+                println!("{:?}", x.speed);
+                println!("{:?}", x.frame);
+                println!("{:?}", x.loop_count);
+                println!("{:?}", x.pattern);
+                println!("{:?}", x.num_rows);
+                println!("{:?}", x.buffer);
+                println!("{:?}", x.total_time);
+                println!("{:?}", x.total_size);
+                assert_eq!(x.bpm, 125)},
+                 */
+                assert!(false)
+            },
+            Err(x) => assert_eq!(x.kind, ErrorKind::SelfType(SelfErrorKind::Other))
         }
-        assert!(false)
     }
 
     #[test]
@@ -153,8 +171,15 @@ mod get_frame_info {
         load_module(&context, &path);
         start_player(&context, Rate::new(44100), Format::Auto);
         play_frame(&context);
-        if let Ok(x) = get_frame_info(&context) {
-            assert_eq!(x.bpm, 125)
+
+        match get_frame_info(&context) {
+            Ok(x) => {
+                println!("{:?}", x.time);
+                println!("{:?}", x.pattern);
+                println!("{:?}", x.total_time);
+                assert_eq!(x.bpm, 125);
+            },
+            Err(_) => assert!(false)
         }
     }
 }
@@ -166,14 +191,13 @@ pub fn get_frame_info(c: &Context) -> Result<FrameInfo, XmpError> {
         frame_info
     };
 
-    let x = &frame_info as *const xmp_frame_info;
-
-    unsafe {
-        match x.as_ref() {
-            Some(_) => Ok(frame_info),
-            _ => return Err(XmpError::new("xmp_get_frame_info call failed", ErrorKind::SelfType(SelfErrorKind::Other)))
-        }
+    // Unfortunately there is no error code returned when a frame is not properly loaded
+    // so we check the bpm of the frame. <= 0 bpm for a frame is likely not a real frame.
+    if frame_info.bpm <= 0 {
+        return Err(XmpError::new("xmp_get_frame_info call failed", ErrorKind::SelfType(SelfErrorKind::Other)))
     }
+
+    Ok(frame_info)
 }
 
 pub fn end_player(c: &Context) -> Result<(), XmpError> {
