@@ -14,7 +14,7 @@ pub struct Rate {
 impl Rate {
 
     pub fn new(rate: i32) -> Rate {
-        if (rate as usize) < XMP_MAX_SRATE || (rate as usize) > XMP_MIN_SRATE {
+        if (rate as usize) > XMP_MAX_SRATE || (rate as usize) < XMP_MIN_SRATE {
             panic!("rate outside of min and max bounds");
         }
         Rate { rate }
@@ -113,16 +113,52 @@ pub fn play_frame(c: &Context) -> Result<(), XmpError> {
 mod get_frame_info {
 
     use super::*;
+    use std::path::Path;
+    use load::load_module;
 
     #[test]
     fn test_get_frame_info_not_loaded() {
         let context = Context::new();
 
+        if let Ok(x) = get_frame_info(&context) {
+            assert_eq!(x.frame_time, 125)
+        }
         if let Err(x) = get_frame_info(&context) {
             assert_eq!(x.kind, ErrorKind::SelfType(SelfErrorKind::Other))
         }
+        assert!(false)
+    }
+
+    #[test]
+    fn test_get_frame_info_loaded_not_playing() {
+        let context = Context::new();
+        let path = Path::new("./test/test0.mod");
+
+        load_module(&context, &path);
+        if let Ok(x) = get_frame_info(&context) {
+            assert_eq!(x.bpm, 125)
+        }
+
+        if let Err(x) = get_frame_info(&context) {
+            assert_eq!(x.kind, ErrorKind::SelfType(SelfErrorKind::Other))
+        }
+        assert!(false)
+    }
+
+    #[test]
+    fn test_get_frame_info() {
+        let context = Context::new();
+        let path = Path::new("./test/test0.mod");
+
+        load_module(&context, &path);
+        start_player(&context, Rate::new(44100), Format::Auto);
+        play_frame(&context);
+        if let Ok(x) = get_frame_info(&context) {
+            assert_eq!(x.bpm, 125)
+        }
     }
 }
+
 pub fn get_frame_info(c: &Context) -> Result<FrameInfo, XmpError> {
     let frame_info  = unsafe {
         let mut frame_info: xmp_frame_info = uninitialized();
