@@ -33,20 +33,20 @@ pub enum ErrorKind {
     InternalType(InternalErrorKind)
 }
 
-
-pub fn from_int_error_code(ret: i32) -> ErrorKind {
-    let kind = match ret.abs() {
-        XMP_END => ErrorKind::InternalType(InternalErrorKind::End),
-        XMP_ERROR_INTERNAL => ErrorKind::InternalType(InternalErrorKind::Internal),
-        XMP_ERROR_FORMAT => ErrorKind::InternalType(InternalErrorKind::BadFormat),
-        XMP_ERROR_LOAD => ErrorKind::InternalType(InternalErrorKind::Load),
-        XMP_ERROR_DEPACK => ErrorKind::InternalType(InternalErrorKind::Depack),
-        XMP_ERROR_SYSTEM => ErrorKind::InternalType(InternalErrorKind::System),
-        XMP_ERROR_INVALID => ErrorKind::InternalType(InternalErrorKind::Invalid),
-        XMP_ERROR_STATE => ErrorKind::InternalType(InternalErrorKind::State),
-        _ => ErrorKind::InternalType(InternalErrorKind::Other)
-    };
-    kind
+impl ErrorKind {
+    pub fn from_xmp(ret: i32) -> Self {
+        match ret.abs() {
+            XMP_END => ErrorKind::InternalType(InternalErrorKind::End),
+            XMP_ERROR_INTERNAL => ErrorKind::InternalType(InternalErrorKind::Internal),
+            XMP_ERROR_FORMAT => ErrorKind::InternalType(InternalErrorKind::BadFormat),
+            XMP_ERROR_LOAD => ErrorKind::InternalType(InternalErrorKind::Load),
+            XMP_ERROR_DEPACK => ErrorKind::InternalType(InternalErrorKind::Depack),
+            XMP_ERROR_SYSTEM => ErrorKind::InternalType(InternalErrorKind::System),
+            XMP_ERROR_INVALID => ErrorKind::InternalType(InternalErrorKind::Invalid),
+            XMP_ERROR_STATE => ErrorKind::InternalType(InternalErrorKind::State),
+            _ => ErrorKind::InternalType(InternalErrorKind::Other)
+        }
+    }
 }
 
 #[derive(Debug)]

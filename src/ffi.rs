@@ -4,6 +4,7 @@
 
 
 use libc::{c_void, c_char, c_int, c_uint, c_short, c_uchar, c_long};
+use std::fmt::{Debug, Formatter, Result};
 
 #[cfg(test)]
 mod tests {
@@ -95,13 +96,32 @@ pub const XMP_ERROR_STATE: i32 = 8;
 
 pub const XMP_NAME_SIZE: usize = 64;
 
-pub const XMP_MAX_CHANNELS: usize = 64;
+/* player modes */
+pub const XMP_MODE_AUTO: usize = 0;
+pub const XMP_MODE_MOD: usize = 1;
+pub const XMP_MODE_NOISETRACKER: usize = 2;
+pub const XMP_MODE_PROTRACKER: usize = 3;
+pub const XMP_MODE_S3M: usize = 4;
+pub const XMP_MODE_ST3: usize = 5;
+pub const XMP_MODE_ST3GUS: usize = 6;
+pub const XMP_MODE_XM: usize = 7;
+pub const XMP_MODE_FT2: usize = 8;
+pub const XMP_MODE_IT: usize = 9;
+pub const XMP_MODE_ITSMP: usize = 10;
 
-pub const XMP_MAX_MOD_LENGTH: usize = 256;
-
-pub const XMP_MAX_ENV_POINTS: usize = 32;
-
+/* limits */
 pub const XMP_MAX_KEYS: usize = 121;
+pub const XMP_MAX_ENV_POINTS: usize = 32;
+pub const XMP_MAX_MOD_LENGTH: usize = 256;
+pub const XMP_MAX_CHANNELS: usize = 64;
+pub const XMP_MAX_SRATE: usize = 49170;
+pub const XMP_MIN_SRATE: usize = 4000;
+pub const XMP_MIN_BPM: usize = 20;
+
+/* frame rate = (50 * bpm / 125) Hz */
+/* frame size = (sampling rate * channels * size) / frame rate */
+pub const XMP_MAX_FRAMESIZE: usize = 5 * XMP_MAX_SRATE * 2 / XMP_MIN_BPM;
+
 
 #[repr(C)]
 pub struct xmp_test_info {
@@ -109,6 +129,7 @@ pub struct xmp_test_info {
     pub t_type: [c_char; XMP_NAME_SIZE]
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_event {
     note: c_uchar,
@@ -121,6 +142,8 @@ pub struct xmp_event {
     flag: c_uchar
 }
 
+
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_channel_info {
     pub period: c_uint,
@@ -134,7 +157,6 @@ pub struct xmp_channel_info {
     pub reserved: c_uchar,
     pub event: xmp_event
 }
-
 
 #[repr(C)]
 pub struct xmp_frame_info {
@@ -159,19 +181,21 @@ pub struct xmp_frame_info {
     pub channel_info: [xmp_channel_info; XMP_MAX_CHANNELS]
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_sequence {
     pub entry_point: c_int,
     pub duration: c_int
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_pattern {
 	  pub rows: c_int,
 	  pub index: [c_int; 1]
 }
 
-
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_channel {
     pub pan: c_int,
@@ -191,12 +215,14 @@ pub struct xmp_envelope {
     pub data: [c_short; XMP_MAX_ENV_POINTS * 2]
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_track {
     pub rows: c_int,
     pub event: [xmp_event; 1]
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_sample {
     pub name: [c_char; 32],
@@ -224,6 +250,7 @@ pub struct xmp_instrument {
     pub sub: *const xmp_sub_instrument
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_sub_instrument {
     pub vol: c_int,
@@ -244,6 +271,7 @@ pub struct xmp_sub_instrument {
     pub ifr: c_int
 }
 
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_key {
     pub ins: c_uchar,
@@ -273,7 +301,7 @@ pub struct xmp_module {
     pub xxo: [c_uchar; XMP_MAX_MOD_LENGTH]
 }
 
-
+#[derive(Debug)]
 #[repr(C)]
 pub struct xmp_module_info {
     pub md5: [c_uchar; 16],
