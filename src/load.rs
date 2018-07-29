@@ -123,7 +123,6 @@ pub struct TestModuleInfo {
     pub t_type: String
 }
 
-
 pub fn test_module(path: &Path) -> Result<TestModuleInfo, XmpError> {
     let p = CString::new(path.to_string_lossy().as_ref()).unwrap();
     let p_ptr = p.as_ptr();
@@ -167,6 +166,25 @@ pub fn load_module(c: &Context, path: &Path) -> Result<(), XmpError> {
     return Ok(());
 }
 
+pub type ModuleInfo = xmp_module_info;
+
+pub fn get_module_info(c: &Context) -> Result<ModuleInfo, XmpError> {
+    let module_info = unsafe {
+        let mut module_info: xmp_module_info = uninitialized();
+        xmp_get_module_info(c.state, &mut module_info);
+        module_info
+    };
+
+    if module_info.num_sequences <= 0 {
+        return Err(XmpError::new(&format!("xmp_get_module_info call failed"), ErrorKind::SelfType(SelfErrorKind::Other)))
+    }
+
+    Ok(module_info)
+}
+
 pub fn release_module(c: &Context) -> Result<(), XmpError> {
+    unsafe {
+        xmp_release_module(c.state);
+    }
     Ok(())
 }
