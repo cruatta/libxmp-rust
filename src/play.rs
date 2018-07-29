@@ -129,7 +129,7 @@ mod get_frame_info {
     }
 
     #[test]
-    fn test_get_frame_info_loaded_not_playing() {
+    fn test_get_frame_info_loaded_not_started() {
         let context = Context::new();
         let path = Path::new("./test/test0.mod");
 
@@ -144,18 +144,35 @@ mod get_frame_info {
     }
 
     #[test]
+    fn test_get_frame_info_loaded() {
+        let context = Context::new();
+        let path = Path::new("./test/test0.mod");
+
+        load_module(&context, &path);
+        start_player(&context, Rate::new(44100), Format::Auto);
+
+        match get_frame_info(&context) {
+            Ok(x) => {
+                assert_eq!(x.bpm, 125)
+            },
+            Err(x) => assert_eq!(x.kind, ErrorKind::SelfType(SelfErrorKind::Other))
+        }
+    }
+
+    #[test]
     fn test_get_frame_info() {
         let context = Context::new();
         let path = Path::new("./test/test0.mod");
 
         load_module(&context, &path);
         start_player(&context, Rate::new(44100), Format::Auto);
-        play_frame(&context);
+
+        for _ in 0..10 {
+            play_frame(&context);
+        }
 
         match get_frame_info(&context) {
-            Ok(x) => {
-                assert_eq!(x.bpm, 125);
-            },
+            Ok(x) => assert_eq!(x.bpm, 125),
             Err(_) => assert!(false)
         }
     }
