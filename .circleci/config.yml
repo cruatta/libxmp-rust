@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Update apt cache
+          command: apt-get update
+      - run:
           name: Install dependencies
           command: apt install -y libxmp-dev=4.4.1-1
       - run:
