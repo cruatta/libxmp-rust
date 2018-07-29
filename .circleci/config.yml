@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: rust:1.27.2-stretch
+    steps:
+      - checkout
+      - run:
+          name: Update apt cache
+          command: apt-get update
+      - run:
+          name: Install dependencies
+          command: apt install -y libxmp-dev=4.4.1-1
+      - run:
+          name: Build
+          command: cargo build --verbose --all
+      - run:
+          name: Test
+          command: cargo test --verbose --all
