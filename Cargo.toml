@@ -1,6 +1,6 @@
 [package]
 name = "libxmp"
-version = "0.1.20180830"
+version = "0.2.0"
 authors = ["Cameron Ruatta <c@ruatta.com>"]
 
 [dependencies]
