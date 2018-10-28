@@ -5,6 +5,9 @@ pub struct Context {
     pub(crate) state: xmp_context
 }
 
+// if you want to use context in threads use a mutex
+unsafe impl Send for Context {}
+unsafe impl Sync for Context {}
 
 impl Context {
     pub fn new() -> Context {

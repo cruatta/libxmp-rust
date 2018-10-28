@@ -115,8 +115,8 @@ mod get_frame_info {
     use super::*;
     use std::path::Path;
     use load::load_module;
-
     #[test]
+
     fn test_get_frame_info_not_loaded() {
         let context = Context::new();
 
