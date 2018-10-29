@@ -134,14 +134,14 @@ pub struct xmp_test_info {
 #[derive(Debug)]
 #[repr(C)]
 pub struct xmp_event {
-    note: c_uchar,
-    ins: c_uchar,
-    vol: c_uchar,
-    fxt: c_uchar,
-    fxp: c_uchar,
-    f2t: c_uchar,
-    f2p: c_uchar,
-    flag: c_uchar
+    pub note: c_uchar,
+    pub ins: c_uchar,
+    pub vol: c_uchar,
+    pub fxt: c_uchar,
+    pub fxp: c_uchar,
+    pub f2t: c_uchar,
+    pub f2p: c_uchar,
+    pub flag: c_uchar
 }
 
 
